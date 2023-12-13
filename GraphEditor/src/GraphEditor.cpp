@@ -2,12 +2,15 @@
 #include <cmath>
 #include <iostream>
 #include "utils.h"
+#include "Viewport.h"
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
 // Constructor: Initializes the graph editor with a reference to the SFML window and the graph.
-GraphEditor::GraphEditor(sf::RenderWindow& window, Graph& graph)
-    : window(window), graph(graph), selected(nullptr), hovered(nullptr), dragging(false) {}
+GraphEditor::GraphEditor(sf::RenderWindow& window, Graph& graph, Viewport& viewport)
+    : window(window), graph(graph), viewport(viewport), selected(nullptr), hovered(nullptr), dragging(false) {}
 
 // Handles different types of events like mouse movement and button presses.
 void GraphEditor::handleEvent(const sf::Event& event) {
@@ -38,7 +41,8 @@ void GraphEditor::handleMouseMove(const sf::Event& event) {
 // Draws a temporary dashed segment from the selected point to the mouse cursor or nearest point.
 void GraphEditor::drawTemporarySegment() {
     if (selected) {
-        Point mousePoint(static_cast<float>(mouse.x), static_cast<float>(mouse.y));
+          sf::Vector2f worldMousePos = viewport.toWorldCoordinates(mouse);
+        Point mousePoint(worldMousePos.x, worldMousePos.y);
         Point* nearest = graph.findNearestPoint(mousePoint);
         sf::Vector2f start(selected->x, selected->y);
         float hoverDistanceThreshold = 25.0f;
@@ -70,7 +74,9 @@ void GraphEditor::drawDashedLine(const sf::Vector2f& start, const sf::Vector2f& 
 void GraphEditor::drawTemporaryPoint() {
     sf::CircleShape tempPoint(5);
     tempPoint.setFillColor(sf::Color::Blue);
-    tempPoint.setPosition(static_cast<float>(mouse.x) - 5, static_cast<float>(mouse.y) - 5); // Center the point on the mouse
+    //tempPoint.setPosition(static_cast<float>(mouse.x) - 5, static_cast<float>(mouse.y) - 5); // Center the point on the mouse
+    sf::Vector2f worldMousePos = viewport.toWorldCoordinates(mouse);
+    tempPoint.setPosition(worldMousePos.x - 5, worldMousePos.y - 5);
     window.draw(tempPoint);
 }
 
@@ -85,7 +91,10 @@ void GraphEditor::handleRightMouseDown(const sf::Event& event) {
 
 // Handles left mouse button down events, adding points or segments.
 void GraphEditor::handleLeftMouseDown(const sf::Event& event) {
-    Point mousePoint(static_cast<float>(mouse.x), static_cast<float>(mouse.y));
+
+    sf::Vector2f worldMousePos = viewport.toWorldCoordinates(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+    Point mousePoint(worldMousePos.x, worldMousePos.y);
+
     Point* nearest = graph.findNearestPoint(mousePoint);
     float hoverDistanceThreshold = 25.0f;
     bool isHoveringNearestPoint = nearest && distance(*nearest, mousePoint) < hoverDistanceThreshold;
@@ -106,6 +115,7 @@ void GraphEditor::handleLeftMouseDown(const sf::Event& event) {
         selected = newPoint;
     }
     dragging = true;
+    graph.updateBoundary(mousePoint);
 }
 
 // Selects a given point.

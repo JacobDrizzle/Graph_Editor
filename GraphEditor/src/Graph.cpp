@@ -4,11 +4,27 @@
 #include <iostream>
 
 // Constructor: Initializes the graph with the given points and segments.
-Graph::Graph(const std::vector<Point>& points, const std::vector<Segment>& segments)
-    : points(points), segments(segments), lastPointIndex(-1) {
+Graph::Graph(const std::vector<Point>& points, const std::vector<Segment>& segments,
+             float min_x, float max_x, float min_y, float max_y)
+    : points(points), segments(segments),
+      minX(min_x), maxX(max_x), minY(min_y), maxY(max_y), lastPointIndex(-1) {
     if (!points.empty()) {
         lastPointIndex = this->points.size() - 1;
+        // Initialize boundary based on existing points
+        for (const auto& point : this->points) {
+            updateBoundary(point);
+        }
     }
+}
+
+void Graph::updateBoundary(const Point& newPoint) {
+    // Update minX and maxX
+    if (newPoint.x < minX) minX = newPoint.x;
+    if (newPoint.x > maxX) maxX = newPoint.x;
+
+    // Update minY and maxY
+    if (newPoint.y < minY) minY = newPoint.y;
+    if (newPoint.y > maxY) maxY = newPoint.y;
 }
 
 // Adds a new point to the graph.

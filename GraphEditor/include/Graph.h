@@ -10,12 +10,17 @@ public:
     // Collections of segments and points in the graph
     std::vector<Segment> segments;
     std::vector<Point> points;
-
+    float minX, maxX, minY, maxY;
     // Index of the last point added to the graph
     size_t lastPointIndex;
 
     // Constructor: Initializes a new graph with optional predefined points and segments.
-    Graph(const std::vector<Point>& points = {}, const std::vector<Segment>& segments = {});
+    Graph(const std::vector<Point>& points = {},
+      const std::vector<Segment>& segments = {},
+      float minX = std::numeric_limits<float>::max(),
+      float maxX = std::numeric_limits<float>::lowest(),
+      float minY = std::numeric_limits<float>::max(),
+      float maxY = std::numeric_limits<float>::lowest());
 
     // Adds a point to the graph
     void addPoint(const Point& point);
@@ -49,6 +54,8 @@ public:
 
     // Gets the last point added to the graph
     const Point* getLastPoint() const;
+
+    void updateBoundary(const Point& newPoint);
 
     // Draws the graph on an SFML render window
     void draw(sf::RenderWindow& window);

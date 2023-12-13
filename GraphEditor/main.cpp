@@ -3,10 +3,12 @@
 #include "Segment.h"
 #include "Graph.h"
 #include "GraphEditor.h"
+#include "Viewport.h"
 
 int main() {
     // Create an SFML window with a size of 800x800 pixels and title "Spatial Graphs"
     sf::RenderWindow window(sf::VideoMode(800, 800), "Spatial Graphs");
+    Viewport viewport(window);
 
     // Initialize points with specific coordinates
     Point p1(200, 200);
@@ -24,7 +26,7 @@ int main() {
     Graph graph({p1, p2, p3, p4}, {s1, s2, s3, s4});
 
     // Initialize the GraphEditor with the SFML window and the created graph
-    GraphEditor editor(window, graph);
+    GraphEditor editor(window, graph, viewport);
 
     // Main loop that runs as long as the window is open
     while (window.isOpen()) {
@@ -37,7 +39,10 @@ int main() {
 
             // Pass all events to the GraphEditor for handling
             editor.handleEvent(event);
+            viewport.handleEvent(event);
         }
+
+        viewport.update();  // Update the viewport
 
         // Clear the window with a dark gray color
         window.clear(sf::Color(34, 39, 46));

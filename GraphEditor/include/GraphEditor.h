@@ -3,13 +3,14 @@
 
 #include <SFML/Graphics.hpp>
 #include "Graph.h"
+#include"Viewport.h"
 #include <stack>
 
 // The GraphEditor class manages the interaction and visualization of a Graph object.
 class GraphEditor {
 public:
     // Constructor: Initializes the GraphEditor with a reference to the SFML window and the graph.
-    GraphEditor(sf::RenderWindow& window, Graph& graph);
+    GraphEditor(sf::RenderWindow& window, Graph& graph, Viewport& viewport);
 
     // Handles various events such as mouse movements and button presses.
     void handleEvent(const sf::Event& event);
@@ -25,6 +26,7 @@ public:
 
     // Draws a temporary point at the current mouse cursor position.
     void drawTemporaryPoint();
+    Viewport& viewport;
 
 private:
     // Reference to the SFML render window.
@@ -35,6 +37,7 @@ private:
 
     // Reference to the graph being edited.
     Graph& graph;
+
 
     // Pointers to the currently selected and hovered points.
     Point* selected;
