@@ -23,19 +23,12 @@
 1. Clone the repository:
 git clone https://github.com/JacobDrizzle/Graph_Editor.git
 
-css
-Copy code
 2. Navigate to the project directory:
 cd Graph_Editor
 
-arduino
-Copy code
 3. Build the project using CMake:
 cmake .
 make
-
-csharp
-Copy code
 
 ## Usage
 Run the built executable to launch the Graph Editor. The application allows you to create and edit virtual environments, with tools for building roads, structures, and landscapes. Experiment with different aspects of the environment to understand the underlying mathematics and algorithms.
