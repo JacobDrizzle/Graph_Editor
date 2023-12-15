@@ -38,13 +38,17 @@
 		<Unit filename="include/Graph.h" />
 		<Unit filename="include/GraphEditor.h" />
 		<Unit filename="include/Point.h" />
+		<Unit filename="include/Polygon.h" />
 		<Unit filename="include/Segment.h" />
+		<Unit filename="include/Viewport.h" />
 		<Unit filename="include/utils.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Graph.cpp" />
 		<Unit filename="src/GraphEditor.cpp" />
 		<Unit filename="src/Point.cpp" />
+		<Unit filename="src/Polygon.cpp" />
 		<Unit filename="src/Segment.cpp" />
+		<Unit filename="src/Viewport.cpp" />
 		<Unit filename="src/utils.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
