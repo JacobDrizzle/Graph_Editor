@@ -16,7 +16,7 @@ public:
 
     // Handles various events such as mouse movements and button presses.
     void handleEvent(const sf::Event& event);
-
+    void handleShiftClick();
     Point getMousePoint();
     // Update method for handling non-event based logic (if any).
     void update();

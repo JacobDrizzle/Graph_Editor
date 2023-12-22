@@ -66,32 +66,37 @@ void GraphEditor::drawTemporaryPoint() {
     window.draw(tempPoint);
 }
 
+void GraphEditor::handleShiftClick() {
+    Point mousePoint = getMousePoint(); // Convert the mouse coordinates to the graph's coordinate system
+    Segment* nearestSegment = graph.findNearestSegment(mousePoint);
+
+    if (nearestSegment) {
+        graph.removeSegmentById(nearestSegment->id);
+    }
+}
 
 // Handles right mouse button down events, deselecting or removing points.
 void GraphEditor::handleRightMouseDown(const sf::Event& event) {
     bool ctrlPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) ||
                        sf::Keyboard::isKeyPressed(sf::Keyboard::RControl);
+
+    bool shftPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
+                       sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
+
+    if(shftPressed) {
+        Point mousePoint = getMousePoint();
+        Segment* tempSeg = graph.findNearestSegment(mousePoint);
+        std::cout << "Nearest Segment ID: (" << tempSeg->id << ")\n";
+        handleShiftClick();
+    }
+
     if(selected != nullptr){
-        std::cout << "Selected X,Y: (" << selected->x << "," << selected->y << ")" << std::endl;
         selected = nullptr;
     }
-    if(hovered!= nullptr)
-        std::cout << "Hovered X,Y: (" << hovered->x << "," << hovered->y << ")" << std::endl;
 
-    std::cout << "Total Points: " << graph.points.size() << std::endl;
     if (ctrlPressed && hovered) {
-    std::cout << "Right Mouse with CNRTL Pressed" << std::endl;
-    std::cout << "Removing Point" << std::endl;
-    if(hovered!= nullptr)
-        removePoint(hovered);
-    if(selected != nullptr)
-        std::cout << "Selected X,Y: (" << selected->x << "," << selected->y << ")" << std::endl;
-
-    std::cout << "Total Points: " << graph.points.size() << std::endl;
-    } else {
-         if(selected != nullptr || hovered!= nullptr)
-    std::cout << "Right mouse down. Selected Point ID: " << (selected ? selected->id : -1)
-              << ", Hovered Point ID: " << (hovered ? hovered->id : -1) << std::endl;
+        if(hovered!= nullptr)
+            removePoint(hovered);
     }
 }
 
@@ -107,18 +112,25 @@ void GraphEditor::handleLeftMouseDown(const sf::Event& event) {
     if (isHoveringNearestPoint) {
         if (selected && nearest != selected) {
             graph.addSegment(Segment(*selected, *nearest));
-            std::cout << "Segment added between selected and nearest point\n";
+            //std::cout << "Segment added between selected and nearest point\n";
         }
         selected = nearest;
     } else {
         graph.addPoint(mousePoint);
         Point* newPoint = &graph.points.back();
-        std::cout << "New Point: (" << newPoint->x << ", " << newPoint->y << ")\n";
         if (selected) {
             graph.addSegment(Segment(*selected, *newPoint));
-            std::cout << "Segment added between selected and new point\n";
+           // std::cout << "Segment added between selected and new point\n";
         }
         selected = newPoint;
+    }
+
+    if (selected) {
+        std::vector<Point> intersections = graph.findIntersections();
+        for (const auto& intersection : intersections) {
+            std::cout << "Intersection found at: ("
+                      << intersection.x << ", " << intersection.y << ")" << std::endl;
+        }
     }
     dragging = true;
     graph.updateBoundary(mousePoint);
@@ -135,7 +147,7 @@ void GraphEditor::handleEvent(const sf::Event& event) {
 
 
             handleRightMouseDown(event);
-        } else {
+        } else if (event.mouseButton.button == sf::Mouse::Left){
             handleLeftMouseDown(event);
         }
     } else if (event.type == sf::Event::MouseButtonReleased) {
@@ -218,15 +230,17 @@ void GraphEditor::selectPoint(Point* point) {
 
 // Removes a given point from the graph.
 void GraphEditor::removePoint(Point* point) {
-    if (point != nullptr) {
-        std::cout << "Removing point: " << (point ? point->id : -1) << std::endl;
-        graph.removePoint(*point);
+    if(graph.points.size() > 0){
+        if (point != nullptr) {
+            //std::cout << "Removing point: " << (point ? point->id : -1) << std::endl;
+            graph.removePoint(*point);
 
-        if (selected == point) {
-            selected = nullptr;
-        }
-        if (hovered == point) {
-            hovered = nullptr;
+            if (selected == point) {
+                selected = nullptr;
+            }
+            if (hovered == point) {
+                hovered = nullptr;
+            }
         }
     }
 }

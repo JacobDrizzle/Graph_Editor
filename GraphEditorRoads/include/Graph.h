@@ -4,6 +4,7 @@
 #include <vector>
 #include "Segment.h"
 #include "Envelope.h"
+#include "ResourceManager.h"
 
 // The Graph class represents a collection of points and segments in 2D space.
 class Graph {
@@ -11,6 +12,7 @@ public:
     // Collections of segments and points in the graph
     std::vector<Segment> segments;
     std::vector<Point> points;
+    ResourceManager resourceManager;
     float minX, maxX, minY, maxY;
     Envelope* findEnvelope(const Segment& segment);
     // Index of the last point added to the graph
@@ -31,6 +33,10 @@ public:
     std::vector<int> getConnectedSegmentIds(const Point& point);
 
     void updateEnvelope(Segment& segment);
+
+    Segment* findNearestSegment(const Point& point);
+
+    std::vector<Point> findIntersections();
     // Adds a point to the graph
     void addPoint(const Point& point);
 
@@ -48,7 +54,7 @@ public:
 
     // Removes a segment from the graph
     void removeSegment(const Segment& seg);
-
+    void removeSegmentById(const std::string& segmentId);
     // Checks if the graph contains a specific point
     bool containsPoint(const Point& point) const;
 
@@ -66,7 +72,7 @@ public:
 
     void updateBoundary(const Point& newPoint);
     void updateGraph();
-
+    float calculateDistanceFromPointToSegment(const Point& point, const Segment& segment);
     // Draws the graph on an SFML render window
     void draw(sf::RenderWindow& window);
 };

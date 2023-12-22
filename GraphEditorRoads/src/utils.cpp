@@ -40,18 +40,25 @@ float lerp(float a, float b, float t) {
 }
 
 // Get Intersection (assuming Point has a constructor Point(float x, float y))
-Point* getIntersection(const Point& A, const Point& B, const Point& C, const Point& D) {
-    float tTop = (D.x - C.x) * (A.y - C.y) - (D.y - C.y) * (A.x - C.x);
-    float uTop = (C.y - A.y) * (A.x - B.x) - (C.x - A.x) * (A.y - B.y);
-    float bottom = (D.y - C.y) * (B.x - A.x) - (D.x - C.x) * (B.y - A.y);
+Point getIntersection(const Point& A, const Point& B, const Point& C, const Point& D) {
+    // Line AB represented as a1x + b1y = c1
+    double a1 = B.y - A.y;
+    double b1 = A.x - B.x;
+    double c1 = a1 * (A.x) + b1 * (A.y);
 
-    if (bottom != 0) {
-        float t = tTop / bottom;
-        float u = uTop / bottom;
-        if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
-            return new Point(lerp(A.x, B.x, t), lerp(A.y, B.y, t));
-        }
+    // Line CD represented as a2x + b2y = c2
+    double a2 = D.y - C.y;
+    double b2 = C.x - D.x;
+    double c2 = a2 * (C.x) + b2 * (C.y);
+
+    double determinant = a1 * b2 - a2 * b1;
+
+    if (determinant == 0) {
+        // The lines are parallel. This is simplified by returning a default Point
+        return Point(-1, -1);
+    } else {
+        double x = (b2 * c1 - b1 * c2) / determinant;
+        double y = (a1 * c2 - a2 * c1) / determinant;
+        return Point(x, y);
     }
-
-    return nullptr;
 }

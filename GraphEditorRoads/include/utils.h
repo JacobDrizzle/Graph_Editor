@@ -21,6 +21,6 @@ float angle(const Point& p);
 float lerp(float a, float b, float t);
 
 // Get Intersection (assuming Point has a constructor Point(float x, float y))
-Point* getIntersection(const Point& A, const Point& B, const Point& C, const Point& D);
+Point getIntersection(const Point& A, const Point& B, const Point& C, const Point& D);
 
 #endif // UTILS_H
